@@ -18,13 +18,6 @@ Unpublished maps that will not affect rank:
 * When on map in co-op mode, you can switch between either driving or mapping.
 * Once in a co-op, removing the hash still start the game in co-op mode.
 
-## In-game timer
-
-* Toggling the option reveals timer per round.
-* Timer ticks for each round.
-* Show timer at round summary.
-* Show total time - do **NOT** include inter-round time (i.e. spent in summary screen).
-
 ## Battle Royale 'show locations' feature
 
 * The 'show locations' button does not show in the lobby

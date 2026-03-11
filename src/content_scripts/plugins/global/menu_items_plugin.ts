@@ -5,23 +5,6 @@ import config from '../../../inversify.config'
 
 const DESELECTED_MENU_ITEM_SELECTOR = 'header nav li:not([class*="selected"])'
 
-const customMenuItemTemplate = document.createElement('div')
-customMenuItemTemplate.append(
-  document.createElement('a'),
-)
-Object.assign(customMenuItemTemplate.style, {
-  display: 'flex',
-  flex: '0 0 auto',
-  height: '100%',
-})
-Object.assign(customMenuItemTemplate.querySelector('a').style, {
-  color: 'white',
-  fontWeight: '700',
-  padding: '1rem',
-  display: 'block',
-  textTransform: 'uppercase',
-})
-
 type SubMenuItem = {
     href: string,
     textContent: string,
@@ -61,9 +44,13 @@ export default class MenuItemsPlugin implements GlobalPlugin {
             this.#observer = null
         }
 
-        const referenceElement = document.querySelector(DESELECTED_MENU_ITEM_SELECTOR) as HTMLLIElement
-          ?? customMenuItemTemplate
-        const container = referenceElement.closest('ol') ?? document.querySelector('[data-qa="header-current-user-pin"]').parentNode
+                const navList = header.querySelector('nav ol') as HTMLOListElement | null
+                const referenceElement = (navList?.querySelector(DESELECTED_MENU_ITEM_SELECTOR)
+                        ?? navList?.querySelector('li')) as HTMLLIElement | null
+                if (!navList || !referenceElement) {
+                        return
+                }
+                const container = referenceElement.closest('ol') as HTMLOListElement
 
         const createMenuItem = (props: { href: string, textContent: string, subMenu?: () => Promise<SubMenuItem[]> }) => {
             const li = referenceElement.cloneNode(true) as HTMLLIElement
@@ -124,12 +111,7 @@ export default class MenuItemsPlugin implements GlobalPlugin {
             }
         })
 
-        if (referenceElement.tagName === 'LI') {
-            container.append(mapMaker, likedMaps)
-        } else {
-            container.insertBefore(likedMaps, document.querySelector('[data-qa="header-current-user-pin"]'))
-            container.insertBefore(mapMaker, likedMaps)
-        }
+        container.append(mapMaker, likedMaps)
     }
 
     #showMenu(reference: HTMLElement, items: () => Promise<SubMenuItem[]>, signal: AbortSignal): void {

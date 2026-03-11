@@ -13,7 +13,6 @@ import { Message } from './broker'
 import { Polygon } from 'geocoding/geojson/gejson'
 import { LocationSource, SavedLocation } from 'location_saving/location'
 import { ScreenshotDTO } from 'databases/saved_locations'
-import { RoundTiming } from 'timer/timer'
 
 export type Messages = {
     setValue: Message<Partial<SettingsKeys>>
@@ -46,11 +45,6 @@ export type Messages = {
     addScreenshot: Message<ScreenshotDTO>
     unlockLocation: Message<LocationSource>
     deleteLocation: Message<SavedLocation>
-    getRoundTiming: Message<[string, number], RoundTiming>
-    getTimingsForGame: Message<string, RoundTiming[]>
-    startRoundTiming: Message<[string, number, number], RoundTiming>
-    endRoundTiming: Message<[string, number, number], RoundTiming>
-    setWaitDuration: Message<[RoundTiming, number]>
     newRound: Message<void>
     randomize: Message<void>
     checkAvatar: Message<string>

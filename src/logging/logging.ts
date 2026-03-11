@@ -26,7 +26,6 @@ export enum AbyssTag {
     LOCATION_SAVER_BATTLE_ROYALE_PLUGIN = 'battle_royale_location_saver_plugin.ts',
     LOCATION_SAVER_MAP_MAKER_PLUGIN = 'location_saver_map_maker_plugin.ts',
     ROUTE_SAVER_GAME_PLUGIN = 'route_saver_game_plugin.ts',
-    TIMER_PLUGIN = 'timer_plugin.tsx',
     CHALLENGE_COOP_PLUGIN = 'challenge_coop_plugin.ts',
     MAP_COOP_PLUGIN = 'map_coop_plugin.ts',
     ENDPOINT_TRANSITION_HANDLER = 'endpoint_transition_handler.ts',

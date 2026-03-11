@@ -1,6 +1,6 @@
 {
   "name": "extenssr",
-  "version": "3.11.8",
+  "version": "3.11.10",
   "description": "'Extenssr Reloaded - A browser extension for GeoGuessr. Original extension by Andrei Onea.'",
   "scripts": {
     "chrome": "npx webpack --mode=production -c webpack.chrome.ts",

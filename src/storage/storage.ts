@@ -62,8 +62,6 @@ export class SettingsKeys {
 
     coopMode: CoopModesById = {}
 
-    enableTimer = false
-
     snowing = false
     lights = false
     randomizer = false

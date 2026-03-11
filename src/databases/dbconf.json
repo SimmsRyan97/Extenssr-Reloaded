@@ -18,11 +18,5 @@
             "savedlocations": "++id,gameId,type,mapId,locked,pos,heading,pitch",
             "screenshots": "locationId"
         }
-    },
-    "timingsdb": {
-        "version": 1,
-        "tables": {
-            "roundtimes": "[gameId+roundId],gameId"
-        }
     }
 }

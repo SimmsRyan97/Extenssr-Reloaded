@@ -25,7 +25,6 @@ const CONFIG = {
     GameScript: Symbol.for('GameScript'),
     GameStateProxiesProvider: Symbol.for('GameStateProxiesProvider'),
     GameInfoProvider: Symbol.for('GameInfoProvider'),
-    TimerPlugin: Symbol.for('TimerPlugin'),
     LocationSaverGamePlugin: Symbol.for('LocationSaverGamePlugin'),
     RouteSaverGamePlugin: Symbol.for('RouteSaverGamePlugin'),
     EasterEggGamePlugin: Symbol.for('EasterEggGamePlugin'),

@@ -361,7 +361,6 @@ function OtherTab({ storage, value, index }: TabProps) {
         }}
       >
         <GridToggleSetting label={'Accessibility mode'} storageKey={'enableAccessibilityMode'} storage={storage} tooltip={'Adjusts UI placement for easier readability.'} />
-        <GridToggleSetting label={'Round timer'} storageKey={'enableTimer'} storage={storage} tooltip={'Shows per-round timing information.'} />
         <Box
           sx={{
             border: '1px solid',

@@ -33,7 +33,6 @@ async function migrateSettingKeys() {
         og: 'oneGuess',
         bl: 'blockList',
         crm: 'coopMode',
-        ent: 'enableTimer',
         snw: 'snowing',
         lts: 'lights',
     }

@@ -2,7 +2,6 @@ import EndpointScript, { StateChangeListener } from 'content/endpoints/content_s
 import { AbyssTag, ILogger } from 'logging/logging'
 import EasterEggGamePlugin from '../plugins/game/easter_egg_game_plugin'
 import RouteSaverGamePlugin from '../plugins/game/route_saver_game_plugin'
-import TimerPlugin from '../plugins/game/timer_plugin'
 import { GameFSM, GameScriptEvent, GameScriptState } from '../state_machines/game'
 import LocationSaverGamePlugin from '../plugins/game/location_saver_game_plugin'
 import { Container, inject, injectable, interfaces } from 'inversify'
@@ -88,7 +87,6 @@ export default class GameScript extends EndpointScript implements StateChangeLis
     }
 
     bindPlugins(bindFunc: interfaces.Bind): void {
-        bindFunc<TimerPlugin>(config.TimerPlugin).to(TimerPlugin)
         bindFunc<LocationSaverGamePlugin>(config.LocationSaverGamePlugin).to(LocationSaverGamePlugin)
         bindFunc<RouteSaverGamePlugin>(config.RouteSaverGamePlugin).to(RouteSaverGamePlugin)
         bindFunc<CountryStreakGamePlugin>(config.CountryStreakGamePlugin).to(CountryStreakGamePlugin)
@@ -102,7 +100,6 @@ export default class GameScript extends EndpointScript implements StateChangeLis
     }
 
     protected initImpl(path: string, container: Container): void {
-        this.addPlugin(container.get<TimerPlugin>(config.TimerPlugin))
         this.addPlugin(container.get<LocationSaverGamePlugin>(config.LocationSaverGamePlugin))
         this.addPlugin(container.get<RouteSaverGamePlugin>(config.RouteSaverGamePlugin))
         this.addPlugin(container.get<CountryStreakGamePlugin>(config.CountryStreakGamePlugin))

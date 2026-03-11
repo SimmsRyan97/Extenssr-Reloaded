@@ -1,3 +1,11 @@
+# Version 3.11.10
+
+- Fix header menu injection to avoid profile/menu layout shifts after in-site navigation.
+
+# Version 3.11.9
+
+- Remove the round timing overlay feature and related settings/messages.
+
 # Version 3.11.4
 
 - Rename extension branding to Extenssr Reloaded.
@@ -158,7 +166,7 @@
 
 # Version 2.9.1
 
-- Revert timer changes that had unintended side effects. It may not work in Firefox again.
+- Revert round timing overlay changes that had unintended side effects. It may not work in Firefox again.
 
 # Version 2.9.0
 
@@ -174,7 +182,7 @@
 
 # Version 2.7.9
 
-- Attempt to catch more timer issues.
+- Attempt to catch more round timing overlay issues.
 
 # Version 2.7.8
 
@@ -182,7 +190,7 @@
 
 # Version 2.7.7
 
-- Fix the round timer on Firefox.
+- Fix the round timing overlay on Firefox.
 
 # Version 2.7.6
 
@@ -202,7 +210,7 @@
 
 # Version 2.7.2
 
-- Fix the round timer resetting when refreshing the page.
+- Fix the round timing overlay resetting when refreshing the page.
 - There are still times when extenssr breaks, especially during coop. But now you can refresh the page until it works without losing any data.
 
 # Version 2.7.1
@@ -220,7 +228,7 @@
 # Version 2.6.4
 
 - Fix menu shortcut dropdowns.
-- Fix round timer not always showing up (hopefully). It's an attempt :)
+- Fix round timing overlay not always showing up (hopefully). It's an attempt :)
 
 # Version 2.6.3
 
@@ -260,11 +268,11 @@
 
 # Version 2.2.2
 
-- Fix for streak not starting properly and timer not being hidden
+- Fix for streak not starting properly and round timing overlay not being hidden
 
 # Version 2.2.0
 
-- Add timer feature! h/t ReAnna\_\_
+- Add round timing overlay feature! h/t ReAnna\_\_
 
 # Version 2.1.0
 
