@@ -4,7 +4,7 @@
 
 A browser extension for extending the experience of [GeoGuessr](https://www.geoguessr.com).
 
-Original extension created by **Andrei Onea**. Extenssr Reloaded continues that project with maintenance and feature updates.
+Original extension created by **[Andrei Onea](https://gitlab.com/nonreviad)**. Extenssr Reloaded continues that project with maintenance and feature updates.
 
 ## Features
 
@@ -45,14 +45,14 @@ Original extension created by **Andrei Onea**. Extenssr Reloaded continues that 
 
 # Reporting bugs
 
-The project is still very new, so bugs are expected. If you encounter a reproducible bug, please do the following:
+The project is always developing new ideas, so bugs are expected. If you encounter a reproducible bug, please do the following:
 
 - (optional - see last bullet point) obtain a bugreport json
   - enable debugging (from the debugging panel of the extension pop-up menu)
   - reproduce the issue
   - download full bug report (same debugging panel)
   - there is no process to anonymise the contents or strip unnecessary personal data; the data is only used for the purpose of fixing bugs, ands is not shared with other parties. If that still makes you uncomfortable, you can skip this step.
-- send the bug report (if you're ok with the caveats) alongside a description of the issue to `extenssr at gmail dot com`.
+- send the bug report (if you're ok with the caveats) alongside a description of the issue to either [My Discord](https://discord.com/users/208345026340585473) or to my [Github](https://github.com/SimmsRyan97/Extenssr-Reloaded).
 
 ## Building
 
@@ -80,7 +80,7 @@ The Chrome extension published to the Web Store is built with `npm run chrome-no
 
 # Acknowledgements
 
-This is currently a project maintained by myself (`extenssr at gmail dot com`), but I stand on the shoulders of giants and rely on others to come up with good ideas.
+This is a project cloned from Andrei and now maintained by myself, I want to thank him and anyone else involved in the original project. I loved the extension but felt it was time to update it after inactivity. All the original contributors are within this file and I will **NEVER** take credit for their work.
 
 Extenssr contributors:
 
