@@ -133,11 +133,11 @@ export default class TimerPlugin extends EndpointPlugin implements StateChangeLi
     #insertInGameContainer(): void {
         const statusContainer = document.querySelector('.game-layout__status, [data-qa="game-layout-status"]') as HTMLDivElement
         if (!statusContainer) {
-            this.logger.log('Timer status container not found')
-            return
+            this.logger.log('Timer status container not found, using floating fallback')
         }
 
-        const existing = statusContainer.querySelector('.extenssr__game-timings') as HTMLDivElement | null
+        const existingScope = statusContainer ?? document.body
+        const existing = existingScope.querySelector('.extenssr__game-timings') as HTMLDivElement | null
         if (existing) {
             const existingContent = existing.querySelector('.extenssr__game-timings__content') as HTMLDivElement | null
             if (existingContent) {
@@ -152,10 +152,18 @@ export default class TimerPlugin extends EndpointPlugin implements StateChangeLi
 
         const timingsBar = document.createElement('div')
         timingsBar.classList.add('extenssr__game-timings')
+        if (!statusContainer) {
+            timingsBar.classList.add('extenssr__game-timings--floating')
+        }
         const content = document.createElement('div')
         content.classList.add('extenssr__game-timings__content')
         timingsBar.append(content)
-        statusContainer.append(timingsBar)
+        if (statusContainer) {
+            statusContainer.append(timingsBar)
+        } else {
+            const root = document.body || document.documentElement
+            root.append(timingsBar)
+        }
 
         this.#container = content
         if (this.#containerRoot) {

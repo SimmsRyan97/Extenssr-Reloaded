@@ -126,6 +126,12 @@ export class MaterialHandler {
         }
 
         this.otherUniforms.set('scrambled', randomScramble())
+        storage.createListener('scramble', (enabled) => {
+            if (enabled) {
+                this.otherUniforms.set('scrambled', randomScramble())
+                this.#updateMaterials()
+            }
+        })
         broker.createListener('newRound', '', () => {
             this.otherUniforms.set('scrambled', randomScramble())
             this.#updateMaterials()

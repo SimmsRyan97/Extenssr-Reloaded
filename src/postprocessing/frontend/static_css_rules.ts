@@ -52,8 +52,21 @@ export default function addCssRules(storage: ChromeStorage): void {
         .extenssr__game-timings {
             margin-top: .5rem;
         }
+        .extenssr__game-timings--floating {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 10000;
+            margin-top: 0;
+            border-radius: 8px;
+            background: rgba(18, 18, 22, 0.82);
+            backdrop-filter: blur(4px);
+        }
         .extenssr__game-timings__content {
             padding: .5rem 0 .5rem 1rem;
+        }
+        .extenssr__game-timings--floating .extenssr__game-timings__content {
+            padding: .35rem .65rem;
         }
         .extenssr__result-timings {
             margin: auto auto 1.5rem auto;
