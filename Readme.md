@@ -1,6 +1,6 @@
 # Extenssr Reloaded
 
-[![Extenssr](./icons/extenssr.png)](https://linktr.ee/extenssr)
+[![Extenssr](./icons/extenssr_reloaded_128.png)](https://linktr.ee/extenssr)
 
 A browser extension for extending the experience of [GeoGuessr](https://www.geoguessr.com).
 
