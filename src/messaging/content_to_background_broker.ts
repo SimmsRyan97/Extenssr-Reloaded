@@ -16,6 +16,7 @@ import { injectable } from 'inversify'
 const TAB_FILTER = {}
 
 const RECEIVING_END_DOES_NOT_EXIST = 'Could not establish connection. Receiving end does not exist.'
+const EXTENSION_CONTEXT_INVALIDATED = 'Extension context invalidated'
 
 function isReceivingEndMissingError(error: unknown): boolean {
     if (!error || typeof error !== 'object' || !('message' in error)) {
@@ -23,6 +24,18 @@ function isReceivingEndMissingError(error: unknown): boolean {
     }
     const message = String((error as { message?: unknown }).message)
     return message.includes(RECEIVING_END_DOES_NOT_EXIST)
+}
+
+function isExtensionContextInvalidatedError(error: unknown): boolean {
+    if (!error || typeof error !== 'object' || !('message' in error)) {
+        return false
+    }
+    const message = String((error as { message?: unknown }).message)
+    return message.includes(EXTENSION_CONTEXT_INVALIDATED)
+}
+
+function isSafeDisconnectError(error: unknown): boolean {
+    return isReceivingEndMissingError(error) || isExtensionContextInvalidatedError(error)
 }
 
 @injectable()
@@ -66,6 +79,9 @@ export class ChromeMessageBroker extends ContentAndBackgroundMessageBroker {
                     const response = await this.onOutwardsMessage(msg, sender)
                     return response
                 } catch (error) {
+                    if (isExtensionContextInvalidatedError(error)) {
+                        return undefined
+                    }
                     console.error(error)
                     throw error
                 }
@@ -83,7 +99,7 @@ export class ChromeMessageBroker extends ContentAndBackgroundMessageBroker {
                     try {
                         await browser.tabs.sendMessage(tab.id, msg)
                     } catch (error) {
-                        if (isReceivingEndMissingError(error)) {
+                        if (isSafeDisconnectError(error)) {
                             return
                         }
                         console.error(error)
@@ -94,7 +110,13 @@ export class ChromeMessageBroker extends ContentAndBackgroundMessageBroker {
                 if (port === otherPort) {
                     return
                 }
-                otherPort.postMessage(msg)
+                try {
+                    otherPort.postMessage(msg)
+                } catch (error) {
+                    if (!isSafeDisconnectError(error)) {
+                        console.error(error)
+                    }
+                }
             }
             await Promise.all(tabs.map(notifyTab).concat(Object.values(this.ports).map(notifyPort)))
         }
@@ -109,24 +131,36 @@ export class ChromeMessageBroker extends ContentAndBackgroundMessageBroker {
                 try {
                     await browser.tabs.sendMessage(tab.id, msg)
                 } catch (error) {
-                    if (isReceivingEndMissingError(error)) {
+                    if (isSafeDisconnectError(error)) {
                         continue
                     }
                     console.error(error)
                 }
             }
             this.ports.forEach((port) => {
-                port.postMessage(msg)
+                try {
+                    port.postMessage(msg)
+                } catch (error) {
+                    if (!isSafeDisconnectError(error)) {
+                        console.error(error)
+                    }
+                }
             })
         } else if (this.isPopup) {
           // Do not wait for a response.
-          this.port.postMessage(msg)
+          try {
+              this.port.postMessage(msg)
+          } catch (error) {
+              if (!isSafeDisconnectError(error)) {
+                  throw error
+              }
+          }
         } else {
             try {
                 const response = await browser.runtime.sendMessage(msg)
                 return response
             } catch (error) {
-                if (isReceivingEndMissingError(error)) {
+                if (isSafeDisconnectError(error)) {
                     return undefined
                 }
                 throw error
@@ -143,6 +177,12 @@ export async function createStorageAndBroker(isBackground = false, isPopup = fal
             storage.setValueFromBroker(key as keyof SettingsKeys, vals[key])
         }
     })
-    storage.addBrokerListener((val) => broker.sendExternalMessage('setValue', val))
+    storage.addBrokerListener((val) => {
+        void broker.sendExternalMessage('setValue', val).catch((error) => {
+            if (!isSafeDisconnectError(error)) {
+                console.error(error)
+            }
+        })
+    })
     return [storage, broker]
 }
