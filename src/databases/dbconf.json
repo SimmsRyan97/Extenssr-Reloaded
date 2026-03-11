@@ -1,0 +1,28 @@
+{
+    "streaksdb": {
+        "version": 1,
+        "tables": {
+            "streaks": "++streakId,mapId,settings",
+            "games": "gameId,streakId"
+        }
+    },
+    "routesdb":{
+        "version": 1,
+        "tables": {
+            "routes": "[gameId+roundId],gameId,route"
+        }
+    },
+    "savedlocationsdb": {
+        "version": 1,
+        "tables": {
+            "savedlocations": "++id,gameId,type,mapId,locked,pos,heading,pitch",
+            "screenshots": "locationId"
+        }
+    },
+    "timingsdb": {
+        "version": 1,
+        "tables": {
+            "roundtimes": "[gameId+roundId],gameId"
+        }
+    }
+}

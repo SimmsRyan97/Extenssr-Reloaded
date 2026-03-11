@@ -1,0 +1,89 @@
+default:
+  image: node:16
+
+variables:
+  SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+  GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+sonarcloud-check:
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+    entrypoint: [""]
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  script:
+    - sonar-scanner
+  only:
+    - merge_requests
+    - main
+
+setup:
+  stage: init
+  artifacts:
+    paths:
+      - node_modules/
+  script:
+    - npm ci --force
+
+build_chrome:
+  stage: build
+  script: npm run chrome-nokey
+  artifacts:
+    paths:
+      - extenssr_chrome.zip
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'main'
+      when: always
+    - if: $RELEASE
+      when: always
+    - when: never
+
+build_firefox:
+  stage: build
+  script: npm run firefox
+  artifacts:
+    paths:
+      - extenssr_firefox.zip
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'main'
+      when: always
+    - if: $RELEASE
+      when: always
+    - when: never
+
+publish_all:
+  stage: publish
+  script: npx ts-node release.ts > release_logs.txt
+  artifacts:
+    paths:
+      - release_logs.txt
+  rules:
+    - if: $RELEASE
+      when: always
+    - when: never
+  needs:
+    - setup
+    - build_chrome
+    - build_firefox
+
+unit_tests:
+  stage: test
+  script: npm run test
+  needs:
+    - setup
+
+lint:
+  stage: test
+  script: npm run ci-lint
+  needs:
+    - setup
+  artifacts:
+    reports:
+      codequality: gl-codequality.json
+
+stages:
+  - init
+  - test
+  - build
+  - publish

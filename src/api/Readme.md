@@ -1,0 +1,1 @@
+Includes type definitions for Geoguessr API specific types.

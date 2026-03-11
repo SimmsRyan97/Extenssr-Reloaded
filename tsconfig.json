@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "jsx": "react",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es2020",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "baseUrl": "./src",
+    "resolveJsonModule": true,
+    "paths": { "common/*": ["common/*"], "content/*": ["content_scripts/*"], "@mui/styled-engine": ["./node_modules/@mui/styled-engine-sc"] }
+  },
+}
