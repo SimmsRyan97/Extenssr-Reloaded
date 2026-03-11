@@ -76,6 +76,7 @@ export default class TimerPlugin extends EndpointPlugin implements StateChangeLi
     // Copy of the current timings for the timer bar.
     #rounds: RoundTiming[] = []
     #container: HTMLDivElement | null = null
+    #timerWrapper: HTMLDivElement | null = null
     #containerRoot: ReactDOM.Root | null = null
     #messageBroker: ContentAndBackgroundMessageBroker
     #gameInfoProvider: GameInfoProvider
@@ -121,8 +122,11 @@ export default class TimerPlugin extends EndpointPlugin implements StateChangeLi
             this.#timer = null
         }
         if (this.#container) {
-            this.#container.remove()
             this.#container = null
+        }
+        if (this.#timerWrapper) {
+            this.#timerWrapper.remove()
+            this.#timerWrapper = null
         }
         if (this.#containerRoot) {
             this.#containerRoot.unmount()
@@ -142,6 +146,7 @@ export default class TimerPlugin extends EndpointPlugin implements StateChangeLi
             const existingContent = existing.querySelector('.extenssr__game-timings__content') as HTMLDivElement | null
             if (existingContent) {
                 this.#container = existingContent
+                this.#timerWrapper = existing
                 if (this.#containerRoot) {
                     this.#containerRoot.unmount()
                 }
@@ -166,6 +171,7 @@ export default class TimerPlugin extends EndpointPlugin implements StateChangeLi
         }
 
         this.#container = content
+        this.#timerWrapper = timingsBar
         if (this.#containerRoot) {
             this.#containerRoot.unmount()
         }

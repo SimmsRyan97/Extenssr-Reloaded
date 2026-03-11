@@ -38,6 +38,27 @@ export class ChromeStorage extends BaseChromeStorage<SettingsKeys> {
 
         const keys = Object.keys(new SettingsKeys()) as (keyof SettingsKeys)[]
         await Promise.all(keys.map((key) => storage.getValue(key)))
+
+        browser.storage.onChanged.addListener((changes, areaName) => {
+            if (areaName !== 'local') {
+                return
+            }
+            for (const key in changes) {
+                if (!(key in new SettingsKeys())) {
+                    continue
+                }
+                const change = changes[key]
+                if (!change || change.newValue === undefined) {
+                    continue
+                }
+                try {
+                    const parsed = JSON.parse(change.newValue as string)
+                    storage.setValueFromBroker(key as keyof SettingsKeys, parsed)
+                } catch {
+                    // Ignore malformed values; source of truth remains storage.
+                }
+            }
+        })
         return storage
     }
 }

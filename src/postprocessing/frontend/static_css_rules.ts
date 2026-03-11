@@ -12,9 +12,6 @@ export default function addCssRules(storage: ChromeStorage): void {
     [data-qa="compass"] {
         display: none;
     }
-    [class*="compass"] {
-        display: none;
-    }
 `)
 
     addStaticCSSWhenPropertyTrue('enableAccessibilityMode', storage, `
