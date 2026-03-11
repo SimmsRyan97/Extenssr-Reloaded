@@ -25,7 +25,6 @@ Original extension created by **[Andrei Onea](https://gitlab.com/nonreviad)**. E
   - Min filter
   - Motion blur
   - Screen scrambler
-- Gameplay helpers
   - Blink mode with multiple timing modes:
     - Fixed time
     - Decrease each round (step + minimum)
@@ -51,7 +50,7 @@ The project is always developing new ideas, so bugs are expected. If you encount
   - reproduce the issue
   - download full bug report (same debugging panel)
   - there is no process to anonymise the contents or strip unnecessary personal data; the data is only used for the purpose of fixing bugs, ands is not shared with other parties. If that still makes you uncomfortable, you can skip this step.
-- send the bug report (if you're ok with the caveats) alongside a description of the issue to either [My Discord](https://discord.com/users/208345026340585473) or to my [Github](https://github.com/SimmsRyan97/Extenssr-Reloaded).
+- send the bug report (if you're ok with the caveats) alongside a description of the issue to either [My Discord](https://discord.com/users/208345026340585473) or to my [Github](https://github.com/SimmsRyan97/Extenssr-Reloaded/issues).
 
 ## Building
 
