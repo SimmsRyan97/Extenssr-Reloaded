@@ -74,8 +74,17 @@ export default function genConfig(distDir: string, clientId: string, manifestVer
                             if (key) {
                                 manifest['key'] = key
                             }
-                            if (guid) {
-                                manifest['browser_specific_settings'] = { 'gecko': { 'id': guid } }
+                            if (manifestVersion === 2) {
+                                const geckoSettings: any = {
+                                    data_collection_permissions: {
+                                        required: ['none'],
+                                        optional: [],
+                                    }
+                                }
+                                if (guid) {
+                                    geckoSettings.id = guid
+                                }
+                                manifest['browser_specific_settings'] = { gecko: geckoSettings } as any
                             }
                             return JSON.stringify(manifest)
                         }

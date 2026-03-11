@@ -1,3 +1,7 @@
+# Version 3.11.11
+
+- Add Firefox gecko data-collection manifest permissions metadata required by AMO validation.
+
 # Version 3.11.10
 
 - Fix header menu injection to avoid profile/menu layout shifts after in-site navigation.
