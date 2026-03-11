@@ -9,6 +9,12 @@ export default function addCssRules(storage: ChromeStorage): void {
     .game-layout__compass {
         display: none;
     }
+    [data-qa="compass"] {
+        display: none;
+    }
+    [class*="compass"] {
+        display: none;
+    }
 `)
 
     addStaticCSSWhenPropertyTrue('enableAccessibilityMode', storage, `
@@ -30,8 +36,15 @@ export default function addCssRules(storage: ChromeStorage): void {
         .game-layout__status {
             z-index: 21;
         }
+        [data-qa="game-layout-status"] {
+            z-index: 21;
+        }
 
         .game-layout__status > div {
+            width: max-content;
+            margin-left: auto;
+        }
+        [data-qa="game-layout-status"] > div {
             width: max-content;
             margin-left: auto;
         }
@@ -49,6 +62,7 @@ export default function addCssRules(storage: ChromeStorage): void {
 
         .extenssr__timer-bar {
             display: flex;
+            flex-wrap: wrap;
         }
 
         .extenssr__timer-element {

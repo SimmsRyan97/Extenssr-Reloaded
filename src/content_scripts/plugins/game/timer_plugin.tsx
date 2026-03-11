@@ -121,6 +121,7 @@ export default class TimerPlugin extends EndpointPlugin implements StateChangeLi
             this.#timer = null
         }
         if (this.#container) {
+            this.#container.remove()
             this.#container = null
         }
         if (this.#containerRoot) {
@@ -130,13 +131,30 @@ export default class TimerPlugin extends EndpointPlugin implements StateChangeLi
     }
 
     #insertInGameContainer(): void {
-        const statusContainer = document.querySelector('.game-layout__status') as HTMLDivElement
-        const referenceElement = statusContainer.firstElementChild
-        const timingsBar = referenceElement.cloneNode(true) as HTMLDivElement
+        const statusContainer = document.querySelector('.game-layout__status, [data-qa="game-layout-status"]') as HTMLDivElement
+        if (!statusContainer) {
+            this.logger.log('Timer status container not found')
+            return
+        }
+
+        const existing = statusContainer.querySelector('.extenssr__game-timings') as HTMLDivElement | null
+        if (existing) {
+            const existingContent = existing.querySelector('.extenssr__game-timings__content') as HTMLDivElement | null
+            if (existingContent) {
+                this.#container = existingContent
+                if (this.#containerRoot) {
+                    this.#containerRoot.unmount()
+                }
+                this.#containerRoot = ReactDOM.createRoot(existingContent)
+                return
+            }
+        }
+
+        const timingsBar = document.createElement('div')
         timingsBar.classList.add('extenssr__game-timings')
-        const content = timingsBar.children[1] as HTMLDivElement
+        const content = document.createElement('div')
         content.classList.add('extenssr__game-timings__content')
-        content.replaceChildren()
+        timingsBar.append(content)
         statusContainer.append(timingsBar)
 
         this.#container = content
@@ -190,6 +208,9 @@ export default class TimerPlugin extends EndpointPlugin implements StateChangeLi
     }
 
     #renderTimerBar(time: number): void {
+        if (!this.#containerRoot) {
+            return
+        }
         this.#containerRoot.render((
                 <TimerBar rounds={this.#rounds} currentTime={time} />
             ))
@@ -208,7 +229,11 @@ export default class TimerPlugin extends EndpointPlugin implements StateChangeLi
         const target = document.createElement('div')
         target.classList.add('extenssr__result-timings')
 
-        const reference = document.querySelector('[data-qa="guess-description"]') as HTMLDivElement
+        const reference = document.querySelector('[data-qa="guess-description"], .result-layout_guessDescription__N5h8N') as HTMLDivElement
+        if (!reference) {
+            this.logger.log('Timer result reference not found')
+            return
+        }
         reference.insertAdjacentElement('afterend', target)
 
         this.#renderResultTimings(target)
