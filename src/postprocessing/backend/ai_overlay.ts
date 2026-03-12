@@ -48,7 +48,7 @@ export default class AiOverlay {
         this.maskTexture = new Texture(gl)
         this.backupTexture = new Texture(gl)
         this.downscaleCanvas = document.createElement('canvas')
-        this.downscaleContext = this.downscaleCanvas.getContext('2d')
+        this.downscaleContext = this.downscaleCanvas.getContext('2d', { willReadFrequently: true } as any) as CanvasRenderingContext2D
         this.maskCanvas = document.createElement('canvas')
         this.maskContext = this.maskCanvas.getContext('2d')
 
@@ -84,7 +84,8 @@ export default class AiOverlay {
             const radius_y = (y_max - y_min) / 2
             const center_x = x_min + radius_x
             const center_y = y_min + radius_y
-            this.maskContext.ellipse(center_x, center_y, radius_x * 2.5, radius_y * 2.5, 0, 0, 2.0 * Math.PI)
+            // Expand masks to better cover camera rigs/roof racks seen on some country-specific cars.
+            this.maskContext.ellipse(center_x, center_y, radius_x * 2.9, radius_y * 3.1, 0, 0, 2.0 * Math.PI)
             this.maskContext.fill()
         }
 

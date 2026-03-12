@@ -80,7 +80,6 @@ export default class RandomizerPlugin implements GlobalPlugin {
           this.storage.setValue('hideCompass', false),
           this.storage.setValue('snowing', false),
           this.storage.setValue('aiOverlay', false),
-          this.storage.setValue('showCar', true),
         ])
       }
         const nonMixableEffects = [
@@ -109,16 +108,7 @@ export default class RandomizerPlugin implements GlobalPlugin {
             await this.storage.setValue('snowing', true)
           },
           async () => {
-            await Promise.allSettled([
-              this.storage.setValue('aiOverlay', true),
-              this.storage.setValue('showCar', true),
-            ])
-          },
-          async () => {
-            await Promise.allSettled([
-              this.storage.setValue('showCar', false),
-              this.storage.setValue('aiOverlay', false),
-            ])
+            await this.storage.setValue('aiOverlay', true)
           },
         ]
 

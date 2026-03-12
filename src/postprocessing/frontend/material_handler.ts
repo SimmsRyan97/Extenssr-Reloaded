@@ -56,7 +56,7 @@ export class MaterialHandler {
         })
         innerBroker.createListener('requestMaterial', '', async() => {
             this.#updateMaterials()
-            this.innerBroker.sendExternalMessage('hideCar', !await storage.getValue('showCar'))
+            this.innerBroker.sendExternalMessage('hideCar', await storage.getValue('aiOverlay'))
         })
         const listener = broker.createListener('frameEnd', 'Material handler', () => {
             this.#updateMaterials()
@@ -100,8 +100,8 @@ export class MaterialHandler {
                 this.#updateMaterials()
             }
         })
-        storage.createListener('showCar', (show) => {
-            this.innerBroker.sendExternalMessage('hideCar', !show)
+        storage.createListener('aiOverlay', (enabled) => {
+            this.innerBroker.sendExternalMessage('hideCar', enabled)
         })
 
         this.updatableUniforms.set('scaling', StorageUpdatableUniform.fromKey(storage, 'scaling', 'pixelateScale', () => this.#updateMaterials()))

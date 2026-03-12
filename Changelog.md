@@ -1,3 +1,13 @@
+# Version 3.11.19
+
+- Request `willReadFrequently` on AI hide-cars readback canvas to prevent repeated `getImageData` warning spam in Chrome.
+
+# Version 3.11.18
+
+- Remove standalone Show Car toggle from Camera tab.
+- Make Hide all cars (AI) also force Google car hiding path.
+- Expand AI mask radius to better cover roof racks and vehicle rigs.
+
 # Version 3.11.17
 
 - Expand seeded randomization to include Snow, AI hide-cars, Show Car hide mode, Motion Blur, and Hide Compass.

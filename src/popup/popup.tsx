@@ -123,7 +123,6 @@ const effectTips: Record<string, string> = {
   motionBlur: 'Adds blur trails while panning.',
   scramble: 'Scrambles view segments each round.',
   hideCompass: 'Hides the in-game compass.',
-  showCar: 'Shows the default GeoGuessr car when enabled.',
   snowing: 'Adds falling snow overlay.',
   aiOverlay: 'AI mask to hide car areas. Heavier performance cost.',
   randomizer: 'Automatically randomizes challenge effects for each new round.',
@@ -378,7 +377,6 @@ function CameraEffectsTab({ storage, value, index, broker }: TabProps) {
         <GridToggleSetting label={'Motion Blur'} storageKey={'motionBlur'} storage={storage} tooltip={effectTips.motionBlur} disabled={seedLocked} />
         <GridToggleSetting label={'Screen scrambler'} storageKey={'scramble'} storage={storage} tooltip={effectTips.scramble} disabled={seedLocked} />
         <GridToggleSetting label={'Hide Compass'} storageKey={'hideCompass'} storage={storage} tooltip={effectTips.hideCompass} disabled={seedLocked} />
-        <GridToggleSetting label={'Show Car'} storageKey={'showCar'} storage={storage} tooltip={effectTips.showCar} disabled={seedLocked} />
       </Box>
 
       <IconButton
