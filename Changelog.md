@@ -1,3 +1,34 @@
+# Version 3.11.17
+
+- Expand seeded randomization to include Snow, AI hide-cars, Show Car hide mode, Motion Blur, and Hide Compass.
+- Add conflict-safe handling between AI hide-cars and Show Car hide mode.
+- Improve generated seed uniqueness while still allowing custom word seeds.
+
+# Version 3.11.16
+
+- Remove "Current step" display from Challenge Seed UI.
+
+# Version 3.11.15
+
+- Generate seed no longer auto-starts seed mode.
+- Start seed generator now immediately applies the first deterministic effect set.
+- Added gameplay-entry fallback to auto-apply first seeded effect when step is zero.
+
+# Version 3.11.14
+
+- Seed mode now auto-randomizes per round without the Auto randomizer toggle.
+- Lock Camera/Special effect controls while seed mode is active until stopped.
+- Reset seed progression automatically when leaving gameplay routes.
+
+# Version 3.11.13
+
+- Move Focus Ring controls to Camera tab while keeping Challenge Seed controls in Special tab.
+
+# Version 3.11.12
+
+- Add Focus Ring mode with adjustable size and shape (circle, square, triangle, star) in Special tab.
+- Add Challenge Seed controls for deterministic randomizer sequences.
+
 # Version 3.11.11
 
 - Add Firefox gecko data-collection manifest permissions metadata required by AMO validation.

@@ -65,6 +65,7 @@ const CONFIG = {
     TextModePlugin: Symbol.for('TextModePlugin'),
     BlinkModePlugin: Symbol.for('BlinkModePlugin'),
     RandomizerPlugin: Symbol.for('RandomizerPlugin'),
+    FocusRingPlugin: Symbol.for('FocusRingPlugin'),
     TrollImagePlugin: Symbol.for('TrollImagePlugin'),
     DebugHandler: Symbol.for('DebugHandler')
 }

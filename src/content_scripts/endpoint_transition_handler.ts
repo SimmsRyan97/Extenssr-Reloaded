@@ -18,6 +18,7 @@ import MenuItemsPlugin from './plugins/global/menu_items_plugin'
 import { ChromeContentToInjectedBroker } from 'messaging/content_to_injected_broker'
 import RandomizerPlugin from './plugins/global/randomizer_plugin'
 import BlinkModePlugin from './plugins/global/blink_mode_plugin'
+import FocusRingPlugin from './plugins/global/focus_ring_plugin'
 import { IPartyApi } from 'api/party'
 
 export interface GlobalPlugin {
@@ -83,6 +84,7 @@ export default class EndpointTransitionHandler {
         container.bind<MenuItemsPlugin>(config.MenuItemsPlugin).to(MenuItemsPlugin).inSingletonScope()
         container.bind<BlinkModePlugin>(config.BlinkModePlugin).to(BlinkModePlugin).inSingletonScope()
         container.bind<RandomizerPlugin>(config.RandomizerPlugin).to(RandomizerPlugin).inSingletonScope()
+        container.bind<FocusRingPlugin>(config.FocusRingPlugin).to(FocusRingPlugin).inSingletonScope()
     }
 
     #addEndpoints(): void {
@@ -99,6 +101,7 @@ export default class EndpointTransitionHandler {
         this.#globalPlugins.push(container.get<MenuItemsPlugin>(config.MenuItemsPlugin))
         this.#globalPlugins.push(container.get<BlinkModePlugin>(config.BlinkModePlugin))
         this.#globalPlugins.push(container.get<RandomizerPlugin>(config.RandomizerPlugin))
+        this.#globalPlugins.push(container.get<FocusRingPlugin>(config.FocusRingPlugin))
     }
 
     async #initGlobalPlugins(): Promise<void> {

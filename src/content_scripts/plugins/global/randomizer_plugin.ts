@@ -6,21 +6,31 @@ import { ChromeMessageBroker } from 'messaging/content_to_background_broker'
 
 @injectable()
 export default class RandomizerPlugin implements GlobalPlugin {
-    enabled = false
-    storage: ChromeStorage
+  storage: ChromeStorage
+  #broker: ChromeMessageBroker
+  #inGameplayPath = false
+
     constructor(
         @inject(config.ChromeStorage) storage: ChromeStorage,
         @inject(config.ContentAndBackgroundMessageBroker) broker: ChromeMessageBroker
     ) {
         this.storage = storage
-        storage.createListener('randomizer', (val) => {
-            this.enabled = val
-            if (this.enabled) {
-              broker.sendInternalMessage('randomize', null)
-            }
-        })
+      this.#broker = broker
+
+    storage.createListener('challengeSeedEnabled', (enabled) => {
+      if (!enabled) {
+        this.storage.setValue('challengeSeedStep', 0)
+      }
+    })
+
+    storage.createListener('challengeSeed', (seed) => {
+      if (!seed.trim()) {
+        this.storage.setValue('challengeSeedStep', 0)
+      }
+    })
+
         broker.createListener('newRound', '', async () => {
-            if (this.enabled) {
+      if (this.isSeedModeActive()) {
                 broker.sendInternalMessage('randomize', null)
             }
         })
@@ -30,33 +40,49 @@ export default class RandomizerPlugin implements GlobalPlugin {
     init(): void {
         //
     }
-    onPathChange?(_path: string): void {
-        //
+    onPathChange?(path: string): void {
+      const wasGameplay = this.#inGameplayPath
+      this.#inGameplayPath = this.isGameplayPath(path)
+
+      if (!wasGameplay && this.#inGameplayPath && this.isSeedModeActive() && this.storage.getCachedValue('challengeSeedStep') === 0) {
+        this.#broker.sendInternalMessage('randomize', null)
+      }
+
+      if (wasGameplay && !this.#inGameplayPath) {
+        this.storage.setValue('challengeSeedStep', 0)
+      }
     }
 
     async randomizer() {
-        const randomInt = (min, max) => Math.floor((Math.random() * (max - min + 1))) + min
-        const randomFloat = (min, max) => Math.random() * (max - min) + min
-        const clearOptions = async () => {
-          await Promise.allSettled([
-            this.storage.setValue('pixelateMap', false),
-            this.storage.setValue('drunk', false),
-            this.storage.setValue('fisheye', false),
-            this.storage.setValue('chromaticAberration', false),
-            this.storage.setValue('water', false),
-            this.storage.setValue('scramble', false),
+      const rngInfo = this.getRngInfo()
+      const rand = () => rngInfo?.random() ?? Math.random()
+      const randomInt = (min, max) => Math.floor((rand() * (max - min + 1))) + min
+      const randomFloat = (min, max) => rand() * (max - min) + min
+      const clearOptions = async () => {
+        await Promise.allSettled([
+          this.storage.setValue('pixelateMap', false),
+          this.storage.setValue('drunk', false),
+          this.storage.setValue('fisheye', false),
+          this.storage.setValue('chromaticAberration', false),
+          this.storage.setValue('water', false),
+          this.storage.setValue('scramble', false),
 
-            this.storage.setValue('toon', false),
-            this.storage.setValue('grayscale', false),
-            this.storage.setValue('invert', false),
-            this.storage.setValue('sepia', false),
-            this.storage.setValue('mirror', false),
-            this.storage.setValue('sobel', false),
-            this.storage.setValue('vignette', false),
-            this.storage.setValue('bloom', false),
-            this.storage.setValue('min', false)
-          ])
-        }
+          this.storage.setValue('toon', false),
+          this.storage.setValue('grayscale', false),
+          this.storage.setValue('invert', false),
+          this.storage.setValue('sepia', false),
+          this.storage.setValue('mirror', false),
+          this.storage.setValue('sobel', false),
+          this.storage.setValue('vignette', false),
+          this.storage.setValue('bloom', false),
+          this.storage.setValue('min', false),
+          this.storage.setValue('motionBlur', false),
+          this.storage.setValue('hideCompass', false),
+          this.storage.setValue('snowing', false),
+          this.storage.setValue('aiOverlay', false),
+          this.storage.setValue('showCar', true),
+        ])
+      }
         const nonMixableEffects = [
           async () => {await Promise.allSettled([this.storage.setValue('pixelateMap', true), this.storage.setValue('pixelateScale', randomFloat(4.0, 300))])},
           async () => {await this.storage.setValue('drunk', true)},
@@ -75,6 +101,25 @@ export default class RandomizerPlugin implements GlobalPlugin {
           async () => {await this.storage.setValue('vignette', true)},
           async () => {await this.storage.setValue('bloom', true)},
           async () => {await this.storage.setValue('min', true)},
+          async () => {await this.storage.setValue('motionBlur', true)},
+          async () => {await this.storage.setValue('hideCompass', true)},
+        ]
+        const specialEffects = [
+          async () => {
+            await this.storage.setValue('snowing', true)
+          },
+          async () => {
+            await Promise.allSettled([
+              this.storage.setValue('aiOverlay', true),
+              this.storage.setValue('showCar', true),
+            ])
+          },
+          async () => {
+            await Promise.allSettled([
+              this.storage.setValue('showCar', false),
+              this.storage.setValue('aiOverlay', false),
+            ])
+          },
         ]
 
         const chooseNonMixable = randomInt(1, 10) % 2 == 0
@@ -89,9 +134,61 @@ export default class RandomizerPlugin implements GlobalPlugin {
             mixableIndices.add(randomInt(0, mixableEffects.length - 1))
         }
         mixableIndices.forEach(index => effects.push(mixableEffects[index]))
+
+        const numSpecial = randomInt(0, specialEffects.length)
+        const specialIndices = new Set<number>()
+        for (let i = 0; i < numSpecial; ++i) {
+          while (specialIndices.size === i)
+            specialIndices.add(randomInt(0, specialEffects.length - 1))
+        }
+        specialIndices.forEach(index => effects.push(specialEffects[index]))
+
         await clearOptions()
         for (const effect of effects) {
           await effect()
         }
+
+        if (rngInfo) {
+          await this.storage.setValue('challengeSeedStep', rngInfo.step + 1)
+        }
+    }
+
+    isSeedModeActive(): boolean {
+      return this.storage.getCachedValue('challengeSeedEnabled') && this.storage.getCachedValue('challengeSeed').trim().length > 0
+    }
+
+    isGameplayPath(path: string): boolean {
+      return /^\/(game|challenge|duels|battle-royale)\//.test(path)
+    }
+
+    getRngInfo(): { random: () => number, step: number } | null {
+      const enabled = this.storage.getCachedValue('challengeSeedEnabled')
+      const seed = this.storage.getCachedValue('challengeSeed').trim()
+      if (!enabled || !seed) {
+        return null
+      }
+
+      const step = this.storage.getCachedValue('challengeSeedStep')
+      const hash = this.seedHash(`${seed}:${step}`)
+      let state = hash >>> 0
+
+      const random = () => {
+        state = (state + 0x6D2B79F5) >>> 0
+        let t = state
+        t = Math.imul(t ^ (t >>> 15), t | 1)
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+      }
+
+      return { random, step }
+    }
+
+    seedHash(str: string): number {
+      let hash = 2166136261
+      for (let i = 0; i < str.length; i++) {
+        hash ^= str.charCodeAt(i)
+        hash = Math.imul(hash, 16777619)
+      }
+      return hash >>> 0
     }
 }

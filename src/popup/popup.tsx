@@ -12,6 +12,8 @@ import Tooltip from '@mui/material/Tooltip'
 import ContentAndBackgroundMessageBroker from 'messaging/content_to_background_broker'
 import Switch from '@mui/material/Switch'
 import Slider from '@mui/material/Slider'
+import TextField from '@mui/material/TextField'
+import MenuItem from '@mui/material/MenuItem'
 import { SettingsKeys } from 'storage/storage'
 import { ChromeStorage } from 'storage/chrome_storage'
 import CasinoIcon from '@mui/icons-material/Casino'
@@ -66,10 +68,11 @@ export type SettingToggleProp<Key extends keyof SettingsKeys> = {
   storageKey: Key,
   storage: ChromeStorage,
   label: string,
-  tooltip?: string
+  tooltip?: string,
+  disabled?: boolean
 }
 
-function GridToggleSetting<Key extends keyof SettingsKeys>({ storage, storageKey, label, tooltip }: SettingToggleProp<Key>) {
+function GridToggleSetting<Key extends keyof SettingsKeys>({ storage, storageKey, label, tooltip, disabled = false }: SettingToggleProp<Key>) {
   const [val, setVal] = useSetting(storage, storageKey)
   const content = <Box
     sx={{
@@ -90,6 +93,7 @@ function GridToggleSetting<Key extends keyof SettingsKeys>({ storage, storageKey
     <Switch
       color="primary"
       checked={val as boolean}
+      disabled={disabled}
       onChange={(evt) => setVal(evt.target.checked as SettingsKeys[Key])}
       size="small"
     />
@@ -122,6 +126,9 @@ const effectTips: Record<string, string> = {
   showCar: 'Shows the default GeoGuessr car when enabled.',
   snowing: 'Adds falling snow overlay.',
   aiOverlay: 'AI mask to hide car areas. Heavier performance cost.',
+  randomizer: 'Automatically randomizes challenge effects for each new round.',
+  focusRing: 'Darkens the screen except a center shape to constrain view.',
+  challengeSeed: 'Makes randomizer outputs deterministic so others can use the same sequence.',
 }
 
 function CameraEffectsTab({ storage, value, index, broker }: TabProps) {
@@ -136,6 +143,12 @@ function CameraEffectsTab({ storage, value, index, broker }: TabProps) {
   const [blinkMinTimeSeconds, setBlinkMinTimeSeconds] = useSetting(storage, 'blinkMinTimeSeconds')
   const [blinkRandomMaxSeconds, setBlinkRandomMaxSeconds] = useSetting(storage, 'blinkRandomMaxSeconds')
   const [blinkRoundDelaySeconds, setBlinkRoundDelaySeconds] = useSetting(storage, 'blinkRoundDelaySeconds')
+  const [focusRingEnabled, setFocusRingEnabled] = useSetting(storage, 'focusRingEnabled')
+  const [focusRingSize, setFocusRingSize] = useSetting(storage, 'focusRingSize')
+  const [focusRingShape, setFocusRingShape] = useSetting(storage, 'focusRingShape')
+  const [challengeSeedEnabled] = useSetting(storage, 'challengeSeedEnabled')
+  const [challengeSeed] = useSetting(storage, 'challengeSeed')
+  const seedLocked = challengeSeedEnabled && challengeSeed.trim().length > 0
   const selectedBlinkMode = blinkMode as BlinkMode
 
   const setMode = (mode: BlinkMode): void => {
@@ -151,6 +164,7 @@ function CameraEffectsTab({ storage, value, index, broker }: TabProps) {
             <Switch
               color="primary"
               checked={blinkEnabled}
+              disabled={seedLocked}
               onChange={(evt) => setBlinkEnabled(evt.target.checked)}
             />
           }
@@ -162,15 +176,16 @@ function CameraEffectsTab({ storage, value, index, broker }: TabProps) {
         {blinkEnabled && <Box sx={{ mt: 1.5 }}>
           <Typography variant="body2" sx={{ mb: 0.5 }}>Round timing mode</Typography>
           <Box sx={{ display: 'flex', gap: 1, mb: 1.5, flexWrap: 'wrap' }}>
-            <Button size="small" variant={selectedBlinkMode === 'fixed' ? 'contained' : 'outlined'} onClick={() => setMode('fixed')}>Fixed</Button>
-            <Button size="small" variant={selectedBlinkMode === 'decrease' ? 'contained' : 'outlined'} onClick={() => setMode('decrease')}>Decrease each round</Button>
-            <Button size="small" variant={selectedBlinkMode === 'random' ? 'contained' : 'outlined'} onClick={() => setMode('random')}>Random</Button>
+            <Button disabled={seedLocked} size="small" variant={selectedBlinkMode === 'fixed' ? 'contained' : 'outlined'} onClick={() => setMode('fixed')}>Fixed</Button>
+            <Button disabled={seedLocked} size="small" variant={selectedBlinkMode === 'decrease' ? 'contained' : 'outlined'} onClick={() => setMode('decrease')}>Decrease each round</Button>
+            <Button disabled={seedLocked} size="small" variant={selectedBlinkMode === 'random' ? 'contained' : 'outlined'} onClick={() => setMode('random')}>Random</Button>
           </Box>
 
           {selectedBlinkMode === 'fixed' && <>
             <Typography variant="body2" sx={{ mb: 0.5 }}>Visible time: {blinkTimeSeconds.toFixed(1)}s</Typography>
             <Slider
               value={blinkTimeSeconds}
+              disabled={seedLocked}
               min={0.1}
               max={10.0}
               step={0.1}
@@ -183,6 +198,7 @@ function CameraEffectsTab({ storage, value, index, broker }: TabProps) {
             <Typography variant="body2" sx={{ mb: 0.5 }}>Start time: {blinkTimeSeconds.toFixed(1)}s</Typography>
             <Slider
               value={blinkTimeSeconds}
+              disabled={seedLocked}
               min={0.1}
               max={10.0}
               step={0.1}
@@ -192,6 +208,7 @@ function CameraEffectsTab({ storage, value, index, broker }: TabProps) {
             <Typography variant="body2" sx={{ mt: 1, mb: 0.5 }}>Decrease step per round: {blinkDecreaseStepSeconds.toFixed(1)}s</Typography>
             <Slider
               value={blinkDecreaseStepSeconds}
+              disabled={seedLocked}
               min={0.1}
               max={5.0}
               step={0.1}
@@ -201,6 +218,7 @@ function CameraEffectsTab({ storage, value, index, broker }: TabProps) {
             <Typography variant="body2" sx={{ mt: 1, mb: 0.5 }}>Minimum time: {blinkMinTimeSeconds.toFixed(1)}s</Typography>
             <Slider
               value={blinkMinTimeSeconds}
+              disabled={seedLocked}
               min={0.1}
               max={Math.max(0.1, blinkTimeSeconds)}
               step={0.1}
@@ -213,6 +231,7 @@ function CameraEffectsTab({ storage, value, index, broker }: TabProps) {
             <Typography variant="body2" sx={{ mb: 0.5 }}>Random max time: {blinkRandomMaxSeconds.toFixed(1)}s</Typography>
             <Slider
               value={blinkRandomMaxSeconds}
+              disabled={seedLocked}
               min={0.1}
               max={8.0}
               step={0.1}
@@ -225,6 +244,7 @@ function CameraEffectsTab({ storage, value, index, broker }: TabProps) {
           <Typography variant="body2" sx={{ mt: 1, mb: 0.5 }}>Round delay: {blinkRoundDelaySeconds.toFixed(1)}s</Typography>
           <Slider
             value={blinkRoundDelaySeconds}
+            disabled={seedLocked}
             min={0.0}
             max={5.0}
             step={0.1}
@@ -236,11 +256,57 @@ function CameraEffectsTab({ storage, value, index, broker }: TabProps) {
 
       <Box sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2, p: 1.5 }}>
         <FormControlLabel
+          label="Focus Ring"
+          control={
+            <Switch
+              color="primary"
+              checked={focusRingEnabled}
+              disabled={seedLocked}
+              onChange={(evt) => setFocusRingEnabled(evt.target.checked)}
+            />
+          }
+          sx={{ width: '100%', m: 0, justifyContent: 'space-between' }}
+        />
+        <Typography variant="caption" color="text.secondary">{effectTips.focusRing}</Typography>
+
+        {focusRingEnabled && <>
+          <Typography variant="body2" sx={{ mt: 1, mb: 0.5 }}>Size: {focusRingSize}%</Typography>
+          <Slider
+            value={focusRingSize}
+            disabled={seedLocked}
+            min={10}
+            max={95}
+            step={1}
+            valueLabelDisplay="auto"
+            onChange={(_, newValue) => setFocusRingSize(newValue as number)}
+          />
+
+          <TextField
+            select
+            fullWidth
+            size="small"
+            label="Shape"
+            sx={{ mt: 1 }}
+            value={focusRingShape}
+            disabled={seedLocked}
+            onChange={(evt) => setFocusRingShape(evt.target.value as SettingsKeys['focusRingShape'])}
+          >
+            <MenuItem value="circle">Circle</MenuItem>
+            <MenuItem value="square">Square</MenuItem>
+            <MenuItem value="triangle">Triangle</MenuItem>
+            <MenuItem value="star">Star</MenuItem>
+          </TextField>
+        </>}
+      </Box>
+
+      <Box sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2, p: 1.5 }}>
+        <FormControlLabel
           label="Pixelate"
           control={
             <Switch
               color="primary"
               checked={pixelate}
+              disabled={seedLocked}
               onChange={(evt) => {
                 setPixelate(evt.target.checked)
               }}
@@ -252,6 +318,7 @@ function CameraEffectsTab({ storage, value, index, broker }: TabProps) {
           <Typography variant="body2" sx={{ mb: 0.5 }}>Strength: {pixelateScaling.toFixed(1)}</Typography>
           <Slider
             value={pixelateScaling}
+            disabled={seedLocked}
             min={4.0}
             max={300.0}
             valueLabelDisplay="auto"
@@ -267,6 +334,7 @@ function CameraEffectsTab({ storage, value, index, broker }: TabProps) {
             <Switch
               color="primary"
               checked={toon}
+              disabled={seedLocked}
               onChange={(evt) => {
                 setToon(evt.target.checked)
               }}
@@ -278,6 +346,7 @@ function CameraEffectsTab({ storage, value, index, broker }: TabProps) {
           <Typography variant="body2" sx={{ mb: 0.5 }}>Strength: {toonScale.toFixed(1)}</Typography>
           <Slider
             value={toonScale}
+            disabled={seedLocked}
             min={2.0}
             max={20.0}
             step={0.1}
@@ -294,25 +363,26 @@ function CameraEffectsTab({ storage, value, index, broker }: TabProps) {
           gap: 1,
         }}
       >
-        <GridToggleSetting label={'Grayscale'} storageKey={'grayscale'} storage={storage} tooltip={effectTips.grayscale} />
-        <GridToggleSetting label={'Invert colours'} storageKey={'invert'} storage={storage} tooltip={effectTips.invert} />
-        <GridToggleSetting label={'Sepia effect'} storageKey={'sepia'} storage={storage} tooltip={effectTips.sepia} />
-        <GridToggleSetting label={'Mirror'} storageKey={'mirror'} storage={storage} tooltip={effectTips.mirror} />
-        <GridToggleSetting label={'Fish eye lens'} storageKey={'fisheye'} storage={storage} tooltip={effectTips.fisheye} />
-        <GridToggleSetting label={'CRT TV filter'} storageKey={'chromaticAberration'} storage={storage} tooltip={effectTips.chromaticAberration} />
-        <GridToggleSetting label={'Edge filter'} storageKey={'sobel'} storage={storage} tooltip={effectTips.sobel} />
-        <GridToggleSetting label={'Drunk mode'} storageKey={'drunk'} storage={storage} tooltip={effectTips.drunk} />
-        <GridToggleSetting label={'Vignette'} storageKey={'vignette'} storage={storage} tooltip={effectTips.vignette} />
-        <GridToggleSetting label={'Water effect'} storageKey={'water'} storage={storage} tooltip={effectTips.water} />
-        <GridToggleSetting label={'Bloom'} storageKey={'bloom'} storage={storage} tooltip={effectTips.bloom} />
-        <GridToggleSetting label={'Min filter'} storageKey={'min'} storage={storage} tooltip={effectTips.min} />
-        <GridToggleSetting label={'Motion Blur'} storageKey={'motionBlur'} storage={storage} tooltip={effectTips.motionBlur} />
-        <GridToggleSetting label={'Screen scrambler'} storageKey={'scramble'} storage={storage} tooltip={effectTips.scramble} />
-        <GridToggleSetting label={'Hide Compass'} storageKey={'hideCompass'} storage={storage} tooltip={effectTips.hideCompass} />
-        <GridToggleSetting label={'Show Car'} storageKey={'showCar'} storage={storage} tooltip={effectTips.showCar} />
+        <GridToggleSetting label={'Grayscale'} storageKey={'grayscale'} storage={storage} tooltip={effectTips.grayscale} disabled={seedLocked} />
+        <GridToggleSetting label={'Invert colours'} storageKey={'invert'} storage={storage} tooltip={effectTips.invert} disabled={seedLocked} />
+        <GridToggleSetting label={'Sepia effect'} storageKey={'sepia'} storage={storage} tooltip={effectTips.sepia} disabled={seedLocked} />
+        <GridToggleSetting label={'Mirror'} storageKey={'mirror'} storage={storage} tooltip={effectTips.mirror} disabled={seedLocked} />
+        <GridToggleSetting label={'Fish eye lens'} storageKey={'fisheye'} storage={storage} tooltip={effectTips.fisheye} disabled={seedLocked} />
+        <GridToggleSetting label={'CRT TV filter'} storageKey={'chromaticAberration'} storage={storage} tooltip={effectTips.chromaticAberration} disabled={seedLocked} />
+        <GridToggleSetting label={'Edge filter'} storageKey={'sobel'} storage={storage} tooltip={effectTips.sobel} disabled={seedLocked} />
+        <GridToggleSetting label={'Drunk mode'} storageKey={'drunk'} storage={storage} tooltip={effectTips.drunk} disabled={seedLocked} />
+        <GridToggleSetting label={'Vignette'} storageKey={'vignette'} storage={storage} tooltip={effectTips.vignette} disabled={seedLocked} />
+        <GridToggleSetting label={'Water effect'} storageKey={'water'} storage={storage} tooltip={effectTips.water} disabled={seedLocked} />
+        <GridToggleSetting label={'Bloom'} storageKey={'bloom'} storage={storage} tooltip={effectTips.bloom} disabled={seedLocked} />
+        <GridToggleSetting label={'Min filter'} storageKey={'min'} storage={storage} tooltip={effectTips.min} disabled={seedLocked} />
+        <GridToggleSetting label={'Motion Blur'} storageKey={'motionBlur'} storage={storage} tooltip={effectTips.motionBlur} disabled={seedLocked} />
+        <GridToggleSetting label={'Screen scrambler'} storageKey={'scramble'} storage={storage} tooltip={effectTips.scramble} disabled={seedLocked} />
+        <GridToggleSetting label={'Hide Compass'} storageKey={'hideCompass'} storage={storage} tooltip={effectTips.hideCompass} disabled={seedLocked} />
+        <GridToggleSetting label={'Show Car'} storageKey={'showCar'} storage={storage} tooltip={effectTips.showCar} disabled={seedLocked} />
       </Box>
 
       <IconButton
+        disabled={seedLocked}
         onClick={ () => { broker.sendExternalMessage('randomize', null)}}
         sx={{
           border: '1px solid',
@@ -330,7 +400,38 @@ function CameraEffectsTab({ storage, value, index, broker }: TabProps) {
   </TabPanel>
 }
 
-function SpecialEffectsTab({ storage, value, index }: TabProps) {
+function SpecialEffectsTab({ storage, value, index, broker }: TabProps) {
+  const [challengeSeedEnabled, setChallengeSeedEnabled] = useSetting(storage, 'challengeSeedEnabled')
+  const [challengeSeed, setChallengeSeed] = useSetting(storage, 'challengeSeed')
+  const seedLocked = challengeSeedEnabled && challengeSeed.trim().length > 0
+
+  const updateSeed = (seed: string): void => {
+    setChallengeSeed(seed)
+  }
+
+  const generateSeed = (): void => {
+    const bytes = new Uint8Array(6)
+    crypto.getRandomValues(bytes)
+    const randomPart = Array.from(bytes)
+      .map((b) => b.toString(36).padStart(2, '0'))
+      .join('')
+      .slice(0, 10)
+    const timestampPart = Date.now().toString(36)
+    updateSeed(`extenssr-${timestampPart}-${randomPart}`)
+  }
+
+  const startSeedMode = (): void => {
+    if (!challengeSeed.trim()) {
+      return
+    }
+    setChallengeSeedEnabled(true)
+    broker.sendExternalMessage('randomize', null)
+  }
+
+  const stopSeedMode = (): void => {
+    setChallengeSeedEnabled(false)
+  }
+
   return <TabPanel value={value} index={index}>
     <Container maxWidth="lg" style={{ maxHeight: 'lg', padding: 0 }}>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
@@ -343,8 +444,32 @@ function SpecialEffectsTab({ storage, value, index }: TabProps) {
           gap: 1,
         }}
       >
-        <GridToggleSetting label={'Snow on streetview'} storageKey={'snowing'} storage={storage} tooltip={effectTips.snowing} />
-        <GridToggleSetting label={'Hide all cars (AI)'} storageKey={'aiOverlay'} storage={storage} tooltip={effectTips.aiOverlay} />
+        <GridToggleSetting label={'Snow on streetview'} storageKey={'snowing'} storage={storage} tooltip={effectTips.snowing} disabled={seedLocked} />
+        <GridToggleSetting label={'Hide all cars (AI)'} storageKey={'aiOverlay'} storage={storage} tooltip={effectTips.aiOverlay} disabled={seedLocked} />
+      </Box>
+
+      <Box sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2, p: 1.5, mt: 1.5 }}>
+        <Typography variant="body2" sx={{ fontWeight: 600 }}>Challenge seed</Typography>
+        <Typography variant="caption" color="text.secondary">{effectTips.challengeSeed}</Typography>
+
+        <TextField
+          fullWidth
+          size="small"
+          label="Seed"
+          sx={{ mt: 1 }}
+          value={challengeSeed}
+          disabled={seedLocked}
+          onChange={(evt) => updateSeed(evt.target.value)}
+          placeholder="extenssr-weekly-1"
+        />
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.25 }}>
+          Progression resets automatically when you leave gameplay routes.
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 1, mt: 1, flexWrap: 'wrap' }}>
+          <Button variant="outlined" size="small" disabled={seedLocked} onClick={generateSeed}>Generate seed</Button>
+          <Button variant="contained" size="small" disabled={seedLocked || !challengeSeed.trim()} onClick={startSeedMode}>Start seed generator</Button>
+          <Button variant="contained" size="small" color="secondary" disabled={!seedLocked} onClick={stopSeedMode}>Stop seed generator</Button>
+        </Box>
       </Box>
     </Container>
   </TabPanel>

@@ -67,6 +67,16 @@ export class SettingsKeys {
     randomizer = false
     scramble = false
 
+    // Focus ring challenge mode
+    focusRingEnabled = false
+    focusRingSize = 42
+    focusRingShape: 'circle' | 'square' | 'triangle' | 'star' = 'circle'
+
+    // Deterministic challenge randomizer mode
+    challengeSeedEnabled = false
+    challengeSeed = ''
+    challengeSeedStep = 0
+
     // Strimmer options
     replaceAvatars = false
 
