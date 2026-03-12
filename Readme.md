@@ -33,6 +33,7 @@ Original extension created by **[Andrei Onea](https://gitlab.com/nonreviad)**. E
 - Special effects
   - Snow on Street View
   - AI car masking (heavier performance cost)
+  - Seed generator (Makes randomizer outputs deterministic so others can use the same sequence)
 - Battle Royale extras
   - Show visited locations at the end of round
 - Country streaks in regular maps
