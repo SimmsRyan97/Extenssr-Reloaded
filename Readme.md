@@ -30,7 +30,6 @@ Original extension created by **[Andrei Onea](https://gitlab.com/nonreviad)**. E
     - Decrease each round (step + minimum)
     - Random time per round (max up to 8s)
   - Hide compass
-  - Show/hide default car
 - Special effects
   - Snow on Street View
   - AI car masking (heavier performance cost)
