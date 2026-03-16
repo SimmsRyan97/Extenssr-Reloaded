@@ -1,3 +1,54 @@
+# Version 3.11.29
+
+- Use a fixed top-middle rectangle cutout for compass visibility instead of dynamic detection.
+- Keep top-right and bottom-left fixed windows and map-hover-only map cutout.
+- Speed up blackout return after exiting settings by reducing Esc bypass duration and increasing poll frequency.
+
+# Version 3.11.28
+
+- Replace dynamic per-element HUD cutouts with deterministic windows to remove glitchy artifacts.
+- Show a top-middle window only when a visible modern compass cluster is detected.
+- Keep fixed visible windows for top-right map info and bottom-left controls.
+
+# Version 3.11.27
+
+- Revert previous fallback-window blackout changes that introduced visual artifacts.
+- Expand only modern compass and top-right status/map-name HUD cutouts with extra padding.
+
+# Version 3.11.26
+
+- Reduce Focus Ring HUD cutout glitching by removing overly broad wildcard selectors.
+- Add padded, stable fallback visibility windows for logo, compass, top-right status, and left controls.
+
+# Version 3.11.25
+
+- Keep modern compass variants visible through Focus Ring blackout by expanding compass HUD selectors.
+
+# Version 3.11.24
+
+- Fix Esc behavior by reducing temporary bypass delay and improving settings menu detection to stop shape flicker.
+- Keep map hover cutout synced while the guess map animates/resizes so first hover uses correct size.
+- Keep key HUD regions visible through Focus Ring blackout (logo, compass, game status panel, and left-side controls).
+
+# Version 3.11.23
+
+- Keep Focus Ring active during guess-map hover, but carve out the hovered map area as an additional transparent window.
+- Keep full-screen Focus Ring bypass only for visible settings/result overlays and Esc.
+
+# Version 3.11.22
+
+- Fix Focus Ring sometimes staying disabled by switching bypass checks to visible overlays only.
+- Limit settings bypass to visible in-game settings/pause modal content instead of broad settings selectors.
+
+# Version 3.11.21
+
+- Temporarily disable Focus Ring while hovering the guess map so players can place guesses with full visibility.
+- Temporarily disable Focus Ring during round result/end-of-round overlays, settings/dialog overlays, and right after pressing Esc.
+
+# Version 3.11.20
+
+- Fix Focus Ring triangle and star shapes by switching to SVG cutout rendering.
+
 # Version 3.11.19
 
 - Request `willReadFrequently` on AI hide-cars readback canvas to prevent repeated `getImageData` warning spam in Chrome.

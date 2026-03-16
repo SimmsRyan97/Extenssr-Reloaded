@@ -274,7 +274,7 @@ function CameraEffectsTab({ storage, value, index, broker }: TabProps) {
             value={focusRingSize}
             disabled={seedLocked}
             min={10}
-            max={95}
+            max={100}
             step={1}
             valueLabelDisplay="auto"
             onChange={(_, newValue) => setFocusRingSize(newValue as number)}
