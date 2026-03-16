@@ -255,7 +255,7 @@ function CameraEffectsTab({ storage, value, index, broker }: TabProps) {
 
       <Box sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2, p: 1.5 }}>
         <FormControlLabel
-          label="Focus Ring"
+          label="Focus Area"
           control={
             <Switch
               color="primary"

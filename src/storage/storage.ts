@@ -67,7 +67,7 @@ export class SettingsKeys {
     randomizer = false
     scramble = false
 
-    // Focus ring challenge mode
+    // Focus area challenge mode
     focusRingEnabled = false
     focusRingSize = 42
     focusRingShape: 'circle' | 'square' | 'triangle' | 'star' = 'circle'

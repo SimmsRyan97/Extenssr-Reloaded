@@ -29,6 +29,7 @@ Original extension created by **[Andrei Onea](https://gitlab.com/nonreviad)**. E
     - Fixed time
     - Decrease each round (step + minimum)
     - Random time per round (max up to 8s)
+  - Focus area
   - Hide compass
 - Special effects
   - Snow on Street View
