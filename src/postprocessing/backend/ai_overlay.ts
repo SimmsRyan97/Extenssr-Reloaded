@@ -60,6 +60,10 @@ export default class AiOverlay {
             return
         }
 
+        if (this.inputCanvas.width <= 0 || this.inputCanvas.height <= 0) {
+            return
+        }
+
         this.inferring = true
 
         await this.#addRectsToMask()
@@ -69,7 +73,12 @@ export default class AiOverlay {
     }
 
     async #addRectsToMask(): Promise<void> {
-        const rects = await this.workerBroker.sendExternalMessage('hideCars', this.#getImageData())
+        const imageData = this.#getImageData()
+        if (!imageData) {
+            return
+        }
+
+        const rects = await this.workerBroker.sendExternalMessage('hideCars', imageData)
 
         const {width, height} = this.downscaleCanvas
         this.maskCanvas.width = width
@@ -95,10 +104,14 @@ export default class AiOverlay {
         this.backupTexture = x
     }
 
-    #getImageData(): ImageData {
+    #getImageData(): ImageData | null {
         const {width, height} = this.inputCanvas
-        const scaled_width = width / this.scale
-        const scaled_height = height / this.scale
+        const scaled_width = Math.max(1, Math.floor(width / this.scale))
+        const scaled_height = Math.max(1, Math.floor(height / this.scale))
+        if (scaled_width <= 0 || scaled_height <= 0) {
+            return null
+        }
+
         this.downscaleCanvas.width = scaled_width
         this.downscaleCanvas.height = scaled_height
         this.downscaleContext.drawImage(this.inputCanvas, 0, 0, width, height, 0, 0, scaled_width, scaled_height)

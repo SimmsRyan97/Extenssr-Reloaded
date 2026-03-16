@@ -1,3 +1,7 @@
+# Version 3.11.30
+
+- Prevent AI overlay `getImageData` errors by skipping inference when the source canvas is zero-sized during page transitions.
+
 # Version 3.11.29
 
 - Use a fixed top-middle rectangle cutout for compass visibility instead of dynamic detection.
